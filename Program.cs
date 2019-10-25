@@ -1,22 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Windows.Forms;
 
 namespace GameDbManagerMega
 {
-	static class Program
+	internal static class Program
 	{
 		/// <summary>
 		/// The main entry point for the application.
 		/// </summary>
 		[STAThread]
-		static void Main(string []param)
+		private static void Main(string[] param)
 		{
 			if (param.Length >= 1)
 			{
-				if (param[0].Equals("-scanroms",StringComparison.CurrentCultureIgnoreCase))
+				if (param[0].Equals("-scanroms", StringComparison.CurrentCultureIgnoreCase))
 				{
 					GameDBMgr.DoScanWithoutUI(param[1]);
 				}

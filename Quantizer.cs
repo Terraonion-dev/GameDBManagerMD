@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Drawing;
 using System.Diagnostics;
 using System.IO;
@@ -10,26 +7,26 @@ namespace Quantizer
 {
 	public class Program
 	{
-		static ushort[] bitmap;
-		static uint[,] palettes;
-		static byte[,,] tiles;
-		static byte[] palcodes;
-		static byte[] palfrees;
-		static ushort[,] finalpalettes;
-		static int[] colusage;
+		private static ushort[] bitmap;
+		private static uint[,] palettes;
+		private static byte[,,] tiles;
+		private static byte[] palcodes;
+		private static byte[] palfrees;
+		private static ushort[,] finalpalettes;
+		private static int[] colusage;
 
 
-		static void WriteMessageLine(String message = "")
+		private static void WriteMessageLine(string message = "")
 		{
 			//Console.WriteLine(message);
 		}
 
-		static void WriteMessage(String message = "")
+		private static void WriteMessage(string message = "")
 		{
 			//Console.Write(message);
 		}
 
-		static int CountPaletteColors(int pal)
+		private static int CountPaletteColors(int pal)
 		{
 			int n = 0;
 			for (int k = 1; k < 256; ++k)
@@ -43,19 +40,21 @@ namespace Quantizer
 			return n;
 		}
 
-		static void SwapColor(int tile, byte c1, byte c2)
+		private static void SwapColor(int tile, byte c1, byte c2)
 		{
 			for (int y = 0; y < 8; ++y)
 			{
 				for (int x = 0; x < 8; ++x)
 				{
 					if (tiles[tile, x, y] == c1)
+					{
 						tiles[tile, x, y] = c2;
+					}
 				}
 			}
 		}
 
-		static int NumSameColors(int tile, int palfinal)
+		private static int NumSameColors(int tile, int palfinal)
 		{
 			int nfound = 0;
 			for (int i = 1; i < CountPaletteColors(tile) + 1; ++i)
@@ -73,7 +72,7 @@ namespace Quantizer
 			return nfound;
 		}
 
-		static void AddMissingColors(int tile, int palfinal)
+		private static void AddMissingColors(int tile, int palfinal)
 		{
 
 			for (int i = 1; i < CountPaletteColors(tile) + 1; ++i)
@@ -95,11 +94,11 @@ namespace Quantizer
 			}
 		}
 
-		public static bool Quantize(String src,String dst)
+		public static bool Quantize(string src, string dst)
 		{
 			if (!File.Exists(src))
 			{
-				Console.WriteLine("File "+src+" not found");
+				Console.WriteLine("File " + src + " not found");
 				return false;
 			}
 
@@ -108,8 +107,8 @@ namespace Quantizer
 			//String f = "0000.png";
 			//String f = @"F:\Firmware\GameDbManager\bin\Debug\Images\reduced\yamamura.png";
 			//foreach (var f in Directory.EnumerateFiles(@"F:\Firmware\GameDbManager\bin\Debug\Images\reduced","*.png"))
-			String f = src;
-			using(Bitmap bm = (Bitmap)Image.FromFile(f))
+			string f = src;
+			using (Bitmap bm = (Bitmap)Image.FromFile(f))
 			{
 				string name = f.Substring(f.LastIndexOf("\\") + 1);
 				name = name.Substring(0, name.LastIndexOf("."));
@@ -150,43 +149,43 @@ namespace Quantizer
 						bitmap[y * bm.Width + x] = (ushort)((r << 6) | (g << 3) | b);
 					}
 				}
-/*
-				for (int it = 0; it < 10; ++it)
-				{
-					for (int i = 0; i < bm.Width * bm.Height; ++i)
-					{
-						ushort c = bitmap[i];
+				/*
+								for (int it = 0; it < 10; ++it)
+								{
+									for (int i = 0; i < bm.Width * bm.Height; ++i)
+									{
+										ushort c = bitmap[i];
 
-						for (int j = i + 1; j < bm.Width * bm.Height; ++j)
-						{
-							ushort c2 = bitmap[j];
+										for (int j = i + 1; j < bm.Width * bm.Height; ++j)
+										{
+											ushort c2 = bitmap[j];
 
-							ushort b1 = (ushort)(c & 0x1f);
-							ushort g1 = (ushort)((c >> 5) & 0x1F);
-							ushort r1 = (ushort)((c >> 10) & 0x1F);
+											ushort b1 = (ushort)(c & 0x1f);
+											ushort g1 = (ushort)((c >> 5) & 0x1F);
+											ushort r1 = (ushort)((c >> 10) & 0x1F);
 
-							ushort b2 = (ushort)(c2 & 0x1f);
-							ushort g2 = (ushort)((c2 >> 5) & 0x1F);
-							ushort r2 = (ushort)((c2 >> 10) & 0x1F);
+											ushort b2 = (ushort)(c2 & 0x1f);
+											ushort g2 = (ushort)((c2 >> 5) & 0x1F);
+											ushort r2 = (ushort)((c2 >> 10) & 0x1F);
 
-							if (i == 0x4e5)
-							{
-								int b = 1;
-							}
+											if (i == 0x4e5)
+											{
+												int b = 1;
+											}
 
-							if (Math.Abs(r1 - r2) <= 2)
-								r2 = r1 = (ushort)((r1 + r2) >> 1);
-							if (Math.Abs(g1 - g2) <= 2)
-								g2 = g1 = (ushort)((g1 + g2) >> 1);
-							if (Math.Abs(b1 - b2) <= 2)
-								b2 = b1 = (ushort)((b1 + b2) >> 1);
+											if (Math.Abs(r1 - r2) <= 2)
+												r2 = r1 = (ushort)((r1 + r2) >> 1);
+											if (Math.Abs(g1 - g2) <= 2)
+												g2 = g1 = (ushort)((g1 + g2) >> 1);
+											if (Math.Abs(b1 - b2) <= 2)
+												b2 = b1 = (ushort)((b1 + b2) >> 1);
 
-							bitmap[i] = (ushort)((r1 << 10) | (g1 << 5) | b1);
-							bitmap[j] = (ushort)((r2 << 10) | (g2 << 5) | b2);
-						}
-					}
-				}
-				*/
+											bitmap[i] = (ushort)((r1 << 10) | (g1 << 5) | b1);
+											bitmap[j] = (ushort)((r2 << 10) | (g2 << 5) | b2);
+										}
+									}
+								}
+								*/
 				for (int ty = 0; ty < tilesy; ++ty)
 				{
 					for (int tx = 0; tx < tilesx; ++tx)
@@ -265,14 +264,18 @@ namespace Quantizer
 					for (int k = 1; k < 256; ++k, ++n)
 					{
 						if (palettes[i, k] == 0x10000)
+						{
 							break;
+						}
 					}
 					WriteMessageLine("Pal " + i + " Colors: " + n);
 
 					for (int k = 1; k < 256; ++k, ++n)
 					{
 						if (palettes[i, k] == 0x10000)
+						{
 							break;
+						}
 						colusage[palettes[i, k] & 0x7FFF]++;
 						WriteMessage("0x" + (palettes[i, k] & 0x7FFF).ToString("X4") + ", ");
 					}
@@ -314,7 +317,9 @@ namespace Quantizer
 									uint col2 = palettes[i, c2];
 
 									if (col1 == 0x10000 || col2 == 0x10000)
+									{
 										continue;
+									}
 
 									ushort b1 = (ushort)(col1 & 0x7);
 									ushort g1 = (ushort)((col1 >> 3) & 0x7);
@@ -412,14 +417,18 @@ namespace Quantizer
 					for (int k = 1; k < 256; ++k, ++n)
 					{
 						if (palettes[i, k] == 0x10000)
+						{
 							break;
+						}
 					}
 					WriteMessageLine("Pal " + i + " Colors: " + n);
 
 					for (int k = 1; k < 256; ++k, ++n)
 					{
 						if (palettes[i, k] == 0x10000)
+						{
 							break;
+						}
 						colusage[palettes[i, k] & 0x7FFF]++;
 						WriteMessage("0x" + (palettes[i, k] & 0x7FFF).ToString("X4") + ", ");
 					}
@@ -512,7 +521,9 @@ namespace Quantizer
 				for (int i = 0; i < totaltiles; ++i)
 				{
 					if (palfrees[i] == 15)
+					{
 						continue;
+					}
 					WriteMessageLine("Palette " + i + " Free " + palfrees[i]);
 
 					for (int c = 0; c < 15 - palfrees[i]; ++c)
@@ -545,95 +556,103 @@ namespace Quantizer
 
 						WriteMessage(tiles[tile, x, y].ToString("X"));
 						if (x == 7)
+						{
 							WriteMessage(" ");
+						}
 					}
 
 					WriteMessageLine();
-					if((ty % 8) == 7)
+					if ((ty % 8) == 7)
+					{
 						WriteMessageLine();
+					}
 				}
 
 
 				//FileStream fsw = new FileStream(name + ".tile", FileMode.Create);
-				FileStream fsw = new FileStream(dst, FileMode.Create);
-
-
-				for (int yy = 0; yy < tilesy; ++yy)
+				using (FileStream fsw = new FileStream(dst, FileMode.Create))
 				{
-					for (int xx = 0; xx < tilesx; ++xx)
+
+
+					for (int yy = 0; yy < tilesy; ++yy)
 					{
-						int tile = yy * tilesx + xx;
-						byte[] tilepce = new byte[32];
-						for (int y = 0; y < 8; ++y)
+						for (int xx = 0; xx < tilesx; ++xx)
 						{
-							for (int x = 0; x < 4; ++x)
+							int tile = yy * tilesx + xx;
+							byte[] tilepce = new byte[32];
+							for (int y = 0; y < 8; ++y)
 							{
-								byte b1 = tiles[tile, 2*x, y];
-								byte b2 = tiles[tile, 2*x+1, y];
+								for (int x = 0; x < 4; ++x)
+								{
+									byte b1 = tiles[tile, 2 * x, y];
+									byte b2 = tiles[tile, 2 * x + 1, y];
 
-								tilepce[4 * y + x] = (byte)((b1 << 4)|b2);
+									tilepce[4 * y + x] = (byte)((b1 << 4) | b2);
+								}
 							}
+
+							fsw.Write(tilepce, 0, 32);
 						}
-
-						fsw.Write(tilepce, 0, 32);
 					}
-				}
 
-				//Tiles
-				BinaryWriter bw = new BinaryWriter(fsw);
-				{
-					WriteMessageLine();
-					WriteMessageLine("Palette Map:");
-					for (int ty = 0; ty < tilesy; ++ty)
+					//Tiles
+					using (BinaryWriter bw = new BinaryWriter(fsw))
 					{
-						for (int tx = 0; tx < tilesx; ++tx)
-						{
-							WriteMessage(palcodes[ty * tilesx + tx].ToString("X") + ",");
-							bw.Write(palcodes[ty * tilesx + tx]);
-						}
 						WriteMessageLine();
+						WriteMessageLine("Palette Map:");
+						for (int ty = 0; ty < tilesy; ++ty)
+						{
+							for (int tx = 0; tx < tilesx; ++tx)
+							{
+								WriteMessage(palcodes[ty * tilesx + tx].ToString("X") + ",");
+								bw.Write(palcodes[ty * tilesx + tx]);
+							}
+
+							WriteMessageLine();
+						}
+
+						//Palettes
+						{
+							WriteMessageLine();
+							WriteMessageLine("Palettes:");
+							for (int i = 0; i < totaltiles; ++i)
+							{
+								if (palfrees[i] == 15)
+								{
+									continue;
+								}
+
+								WriteMessage("Palette " + i.ToString("D2") + ": ");
+								ushort[] palette = new ushort[16];
+
+								for (int c = 0; c < 15 - palfrees[i] + 1; ++c)
+								{
+									ushort col = (ushort)(finalpalettes[i, c] & 0x7FFF);
+									palette[c] = col;
+									WriteMessage(col.ToString("X4") + ",");
+								}
+
+								for (int j = 0; j < 16; ++j)
+								{
+									ushort pal = palette[j];
+
+									ushort b1 = (ushort)(pal & 0x7);
+									ushort g1 = (ushort)((pal >> 3) & 0x7);
+									ushort r1 = (ushort)((pal >> 6) & 0x7);
+
+									//pal = (ushort)((r1 << 1) | (g1 << 5) | (b1 << 9));
+
+									pal = (ushort)((r1 << 9) | (g1 << 13) | (b1 << 1));
+
+									bw.Write(pal);
+								}
+
+								WriteMessageLine();
+							}
+
+						}
 					}
 				}
-				//Palettes
-				{
-					WriteMessageLine();
-					WriteMessageLine("Palettes:");
-					for (int i = 0; i < totaltiles; ++i)
-					{
-						if (palfrees[i] == 15)
-							continue;
-
-						WriteMessage("Palette " + i.ToString("D2") + ": ");
-						ushort[] palette = new ushort[16];
-
-						for (int c = 0; c < 15 - palfrees[i] + 1; ++c)
-						{
-							ushort col = (ushort)(finalpalettes[i, c] & 0x7FFF);
-							palette[c] = col;
-							WriteMessage(col.ToString("X4") + ",");
-						}
-
-						for (int j = 0; j < 16; ++j)
-						{
-							ushort pal = palette[j];
-
-							ushort b1 = (ushort)(pal & 0x7);
-							ushort g1 = (ushort)((pal >> 3) & 0x7);
-							ushort r1 = (ushort)((pal >> 6) & 0x7);
-
-							//pal = (ushort)((r1 << 1) | (g1 << 5) | (b1 << 9));
-
-							pal = (ushort)((r1 << 9) | (g1 << 13) | (b1 << 1));
-
-							bw.Write(pal);
-						}
-
-						WriteMessageLine();
-					}
-
-				}
-
-				fsw.Close();
 			}
 
 			//log.Close();

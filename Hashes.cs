@@ -1,11 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 
 namespace GameDbManagerMega
@@ -57,13 +52,13 @@ namespace GameDbManagerMega
 					ofn.FileName.EndsWith(".sg", StringComparison.InvariantCultureIgnoreCase)
 					)
 				{
-					var data = File.ReadAllBytes(ofn.FileName);
+					byte[] data = File.ReadAllBytes(ofn.FileName);
 
 					if ((data.Length & 0xFFF) != 0)
 					{
 						uint l = (uint)data.Length & 0xFFFFF000;
 
-						var dat = new byte[l];
+						byte[] dat = new byte[l];
 						Array.Copy(data, data.Length & 0xFFF, dat, 0, l);
 
 						data = dat;
@@ -77,7 +72,7 @@ namespace GameDbManagerMega
 				}
 				else if (ofn.FileName.EndsWith(".cue", StringComparison.InvariantCultureIgnoreCase))
 				{
-					var cue = new CueSheet(ofn.FileName);
+					CueSheet cue = new CueSheet(ofn.FileName);
 					crc = GameDBMgr.ComputeCueCrc(cue);
 				}
 				else
@@ -87,14 +82,13 @@ namespace GameDbManagerMega
 				}
 
 				//Check if the crc already exists
-				String crcstr = crc.ToString("X8");
-				var ck = gameDB.GameCk.FirstOrDefault(x => x.Checksum == crcstr);
+				string crcstr = crc.ToString("X8");
+				GameDB.GameCkRow ck = gameDB.GameCk.FirstOrDefault(x => x.Checksum == crcstr);
 				if (ck != null)
 				{
-					if (ck.GameID == gameID)
-						MessageBox.Show("This checksum already exists for this game");
-					else
-						MessageBox.Show("This checksum already exists for a different game!!");
+					MessageBox.Show(ck.GameID == gameID
+						? "This checksum already exists for this game"
+						: "This checksum already exists for a different game!!");
 				}
 				else
 				{
@@ -112,12 +106,14 @@ namespace GameDbManagerMega
 		{
 			foreach (DataGridViewCell r in dataGridView1.SelectedCells)
 			{
-				String crc = (String)r.Value;
+				string crc = (string)r.Value;
 
 				GameDB.GameCkRow ck = gameDB.GameCk.FirstOrDefault(x => x.Checksum == crc);
 
-				if(ck != null)
+				if (ck != null)
+				{
 					gameDB.GameCk.RemoveGameCkRow(ck);
+				}
 			}
 		}
 	}

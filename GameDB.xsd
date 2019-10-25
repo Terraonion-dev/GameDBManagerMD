@@ -1,0 +1,63 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="GameDB" targetNamespace="http://tempuri.org/GameDB.xsd" xmlns:mstns="http://tempuri.org/GameDB.xsd" xmlns="http://tempuri.org/GameDB.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:msprop="urn:schemas-microsoft-com:xml-msprop" attributeFormDefault="qualified" elementFormDefault="qualified">
+  <xs:annotation>
+    <xs:appinfo source="urn:schemas-microsoft-com:xml-msdatasource">
+      <DataSource DefaultConnectionIndex="0" FunctionsComponentName="QueriesTableAdapter" Modifier="AutoLayout, AnsiClass, Class, Public" SchemaSerializationMode="IncludeSchema" xmlns="urn:schemas-microsoft-com:xml-msdatasource">
+        <Connections />
+        <Tables />
+        <Sources />
+      </DataSource>
+    </xs:appinfo>
+  </xs:annotation>
+  <xs:element name="GameDB" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msprop:EnableTableAdapterManager="true" msprop:Generator_DataSetName="GameDB" msprop:Generator_UserDSName="GameDB">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="Game" msprop:Generator_TableClassName="GameDataTable" msprop:Generator_TableVarName="tableGame" msprop:Generator_TablePropName="Game" msprop:Generator_RowDeletingName="GameRowDeleting" msprop:Generator_RowChangingName="GameRowChanging" msprop:Generator_RowEvHandlerName="GameRowChangeEventHandler" msprop:Generator_RowDeletedName="GameRowDeleted" msprop:Generator_UserTableName="Game" msprop:Generator_RowChangedName="GameRowChanged" msprop:Generator_RowEvArgName="GameRowChangeEvent" msprop:Generator_RowClassName="GameRow">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="ID" msdata:AutoIncrement="true" msprop:Generator_ColumnVarNameInTable="columnID" msprop:Generator_ColumnPropNameInRow="ID" msprop:Generator_ColumnPropNameInTable="IDColumn" msprop:Generator_UserColumnName="ID" type="xs:int" />
+              <xs:element name="Name" msprop:Generator_ColumnVarNameInTable="columnName" msprop:Generator_ColumnPropNameInRow="Name" msprop:Generator_ColumnPropNameInTable="NameColumn" msprop:Generator_UserColumnName="Name" type="xs:string" minOccurs="0" />
+              <xs:element name="Year" msprop:Generator_ColumnVarNameInTable="columnYear" msprop:Generator_ColumnPropNameInRow="Year" msprop:Generator_ColumnPropNameInTable="YearColumn" msprop:Generator_UserColumnName="Year" type="xs:short" minOccurs="0" />
+              <xs:element name="Genre" msprop:Generator_ColumnVarNameInTable="columnGenre" msprop:Generator_ColumnPropNameInRow="Genre" msprop:Generator_ColumnPropNameInTable="GenreColumn" msprop:Generator_UserColumnName="Genre" type="xs:short" minOccurs="0" />
+              <xs:element name="Screenshot" msprop:Generator_ColumnVarNameInTable="columnScreenshot" msprop:Generator_ColumnPropNameInRow="Screenshot" msprop:Generator_ColumnPropNameInTable="ScreenshotColumn" msprop:Generator_UserColumnName="Screenshot" type="xs:string" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="GameCk" msprop:Generator_TableClassName="GameCkDataTable" msprop:Generator_TableVarName="tableGameCk" msprop:Generator_TablePropName="GameCk" msprop:Generator_RowDeletingName="GameCkRowDeleting" msprop:Generator_RowChangingName="GameCkRowChanging" msprop:Generator_RowEvHandlerName="GameCkRowChangeEventHandler" msprop:Generator_RowDeletedName="GameCkRowDeleted" msprop:Generator_UserTableName="GameCk" msprop:Generator_RowChangedName="GameCkRowChanged" msprop:Generator_RowEvArgName="GameCkRowChangeEvent" msprop:Generator_RowClassName="GameCkRow">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Checksum" msprop:Generator_ColumnVarNameInTable="columnChecksum" msprop:Generator_ColumnPropNameInRow="Checksum" msprop:Generator_ColumnPropNameInTable="ChecksumColumn" msprop:Generator_UserColumnName="Checksum" type="xs:string" />
+              <xs:element name="GameID" msprop:Generator_ColumnVarNameInTable="columnGameID" msprop:Generator_ColumnPropNameInRow="GameID" msprop:Generator_ColumnPropNameInTable="GameIDColumn" msprop:Generator_UserColumnName="GameID" type="xs:int" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="Genre" msprop:Generator_TableClassName="GenreDataTable" msprop:Generator_TableVarName="tableGenre" msprop:Generator_TablePropName="Genre" msprop:Generator_RowDeletingName="GenreRowDeleting" msprop:Generator_RowChangingName="GenreRowChanging" msprop:Generator_RowEvHandlerName="GenreRowChangeEventHandler" msprop:Generator_RowDeletedName="GenreRowDeleted" msprop:Generator_UserTableName="Genre" msprop:Generator_RowChangedName="GenreRowChanged" msprop:Generator_RowEvArgName="GenreRowChangeEvent" msprop:Generator_RowClassName="GenreRow">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Genre" msdata:AutoIncrement="true" msdata:AutoIncrementSeed="1" msprop:Generator_ColumnVarNameInTable="columnGenre" msprop:Generator_ColumnPropNameInRow="Genre" msprop:Generator_ColumnPropNameInTable="GenreColumn" msprop:Generator_UserColumnName="Genre" type="xs:short" />
+              <xs:element name="Name" msprop:Generator_ColumnVarNameInTable="columnName" msprop:Generator_ColumnPropNameInRow="Name" msprop:Generator_ColumnPropNameInTable="NameColumn" msprop:Generator_UserColumnName="Name" type="xs:string" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
+    </xs:complexType>
+    <xs:unique name="Constraint1" msdata:PrimaryKey="true">
+      <xs:selector xpath=".//mstns:Game" />
+      <xs:field xpath="mstns:ID" />
+    </xs:unique>
+    <xs:unique name="GameCk_Constraint1" msdata:ConstraintName="Constraint1" msdata:PrimaryKey="true">
+      <xs:selector xpath=".//mstns:GameCk" />
+      <xs:field xpath="mstns:Checksum" />
+    </xs:unique>
+    <xs:unique name="Genre_Constraint1" msdata:ConstraintName="Constraint1" msdata:PrimaryKey="true">
+      <xs:selector xpath=".//mstns:Genre" />
+      <xs:field xpath="mstns:Genre" />
+    </xs:unique>
+  </xs:element>
+  <xs:annotation>
+    <xs:appinfo>
+      <msdata:Relationship name="GameCk_Game" msdata:parent="GameCk" msdata:child="Game" msdata:parentkey="GameID" msdata:childkey="ID" msprop:Generator_UserChildTable="Game" msprop:Generator_ChildPropName="GetGameRows" msprop:Generator_UserRelationName="GameCk_Game" msprop:Generator_RelationVarName="relationGameCk_Game" msprop:Generator_UserParentTable="GameCk" msprop:Generator_ParentPropName="GameCkRow" />
+      <msdata:Relationship name="Game_Genre" msdata:parent="Game" msdata:child="Genre" msdata:parentkey="Genre" msdata:childkey="Genre" msprop:Generator_UserChildTable="Genre" msprop:Generator_ChildPropName="GetGenreRows" msprop:Generator_UserRelationName="Game_Genre" msprop:Generator_ParentPropName="GameRow" msprop:Generator_RelationVarName="relationGame_Genre" msprop:Generator_UserParentTable="Game" />
+    </xs:appinfo>
+  </xs:annotation>
+</xs:schema>

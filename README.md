@@ -3,6 +3,8 @@ Screenshots manager for MegaSD
 
 ## Usage
 
+If you can't compile the source, or just want to use the tool, you can grab a precompiled build and sample library from the [Built](Built) directory
+
 ### Adding games to the library
 - First, prepare a 64x40 screenshot for each game you want to add
 - Go to the very last list entry, marked with an *, and write the game name in the first column. A new row will be created for your game.

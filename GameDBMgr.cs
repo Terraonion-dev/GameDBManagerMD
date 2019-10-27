@@ -163,7 +163,7 @@ namespace GameDbManagerMega
 		private static long GetSize(string file)
 		{
 			long sz;
-			using (FileStream fs = new FileStream(file, FileMode.Open))
+			using (FileStream fs = new FileStream(file, FileMode.Open, FileAccess.Read))
 			{
 				sz = fs.Length;
 			}
@@ -504,7 +504,7 @@ namespace GameDbManagerMega
 		{
 			CueSheet.Track track = cue.FindFirstDataTrack();
 			uint crcAccum = 0xFFFFFFFF;
-			using (FileStream fs = new FileStream(track.FileName, FileMode.Open))
+			using (FileStream fs = new FileStream(track.FileName, FileMode.Open, FileAccess.Read))
 			{
 				using (BinaryReader reader = new BinaryReader(fs))
 				{
@@ -553,7 +553,7 @@ namespace GameDbManagerMega
 
 			CueSheet.Track track = cue.FindFirstDataTrack();
 
-			using (FileStream fs = new FileStream(track.FileName, FileMode.Open))
+			using (FileStream fs = new FileStream(track.FileName, FileMode.Open, FileAccess.Read))
 			{
 				using (BinaryReader reader = new BinaryReader(fs))
 				{

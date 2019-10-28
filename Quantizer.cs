@@ -149,43 +149,6 @@ namespace Quantizer
 						bitmap[y * bm.Width + x] = (ushort)((r << 6) | (g << 3) | b);
 					}
 				}
-				/*
-								for (int it = 0; it < 10; ++it)
-								{
-									for (int i = 0; i < bm.Width * bm.Height; ++i)
-									{
-										ushort c = bitmap[i];
-
-										for (int j = i + 1; j < bm.Width * bm.Height; ++j)
-										{
-											ushort c2 = bitmap[j];
-
-											ushort b1 = (ushort)(c & 0x1f);
-											ushort g1 = (ushort)((c >> 5) & 0x1F);
-											ushort r1 = (ushort)((c >> 10) & 0x1F);
-
-											ushort b2 = (ushort)(c2 & 0x1f);
-											ushort g2 = (ushort)((c2 >> 5) & 0x1F);
-											ushort r2 = (ushort)((c2 >> 10) & 0x1F);
-
-											if (i == 0x4e5)
-											{
-												int b = 1;
-											}
-
-											if (Math.Abs(r1 - r2) <= 2)
-												r2 = r1 = (ushort)((r1 + r2) >> 1);
-											if (Math.Abs(g1 - g2) <= 2)
-												g2 = g1 = (ushort)((g1 + g2) >> 1);
-											if (Math.Abs(b1 - b2) <= 2)
-												b2 = b1 = (ushort)((b1 + b2) >> 1);
-
-											bitmap[i] = (ushort)((r1 << 10) | (g1 << 5) | b1);
-											bitmap[j] = (ushort)((r2 << 10) | (g2 << 5) | b2);
-										}
-									}
-								}
-								*/
 				for (int ty = 0; ty < tilesy; ++ty)
 				{
 					for (int tx = 0; tx < tilesx; ++tx)
@@ -301,11 +264,6 @@ namespace Quantizer
 
 						int nit = 1;
 
-						if (i == 0x35)
-						{
-							int a = 1;
-						}
-
 						while (CountPaletteColors(i) > 15)
 						{
 							int colors = CountPaletteColors(i);
@@ -332,16 +290,8 @@ namespace Quantizer
 
 									double diff = 4.0f * Math.Sqrt((b1 - b2) * (b1 - b2) + (g1 - g2) * (g1 - g2) + (r1 - r2) * (r1 - r2));
 
-									if (nit > 2)
-									{
-										int a = 1;
-									}
 									if (diff < nit)
 									{
-										if (i == 0xb && (c1 == 0xc || c2 == 0xc))
-										{
-											int a = 1;
-										}
 										if (colusage[col1 & 0x7FFF] > colusage[col2 & 0x7FFF])
 										{
 											SwapColor(i, (byte)c2, (byte)c1);
@@ -375,36 +325,13 @@ namespace Quantizer
 								++n;
 							}
 						}
-						for (int c1 = 0; c1 < 256; ++c1)
+						for (int c1 = 1; c1 < 256; ++c1)
 						{
 							if (c1 < n)
 								palettes[i, c1] = p2[c1];
 							else
 								palettes[i, c1] = 0x10000;
 						}
-						/*
-						for (int c1 = 1; c1 < 256; ++c1)
-						{
-							if (palettes[i, c1] == 0x10000)
-							{
-								for (int c2 = 255; c2 >= 1; --c2)
-								{
-									if (palettes[i, c2] != 0x10000)
-									{
-										if (c1 == 0xFF || c2 == 0xFF)
-										{
-											int a = 1;
-										}
-										palettes[i, c1] = palettes[i, c2];
-										palettes[i, c2] = 0x10000;
-										SwapColor(i, (byte)c2, (byte)c1);
-										break;
-									}
-								}
-							}
-
-						}
-						*/
 
 					}
 				}
@@ -493,7 +420,7 @@ namespace Quantizer
 							byte tilepal = palcodes[i];
 
 							bool found = false;
-							for (int cc = 0; cc < 16 - palfrees[tilepal]; ++cc)
+							for (int cc = 1; cc < 16 - palfrees[tilepal]; ++cc)
 							{
 								if ((finalpalettes[tilepal, cc] & 0x7FFF) == (c & 0x7FFF))
 								{

@@ -93,7 +93,13 @@ namespace GameDbManagerMega
 						DialogResult dr = ofd.ShowDialog();
 						if (dr == DialogResult.OK)
 						{
-							dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = ofd.FileName;
+							string cwd = Directory.GetCurrentDirectory();
+							string fname = ofd.FileName;
+
+							if (fname.StartsWith(cwd))
+								fname = fname.Substring(cwd.Length + 1);
+
+							dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = fname;
 						}
 
 						break;
@@ -128,7 +134,8 @@ namespace GameDbManagerMega
 				{
 					if (!string.IsNullOrEmpty(game.Screenshot))
 					{
-						string dst = "TileCache/" + game.Screenshot.Substring(game.Screenshot.LastIndexOfAny(new char[] { '\\', '/' }) + 1);
+						//string dst = "TileCache/" + game.Screenshot.Substring(game.Screenshot.LastIndexOfAny(new char[] { '\\', '/' }) + 1);
+						string dst = "TileCache/" + game.Screenshot.Replace("\\", "_").Replace("/", "_").Replace(":", "_");
 
 						dst = dst.Replace(".png", ".tile");
 
@@ -272,7 +279,8 @@ namespace GameDbManagerMega
 
 						if (gg != null && !gg.IsScreenshotNull())
 						{
-							string dst = "TileCache/" + gg.Screenshot.Substring(gg.Screenshot.LastIndexOfAny(new char[] { '\\', '/' }) + 1);
+							//string dst = "TileCache/" + gg.Screenshot.Substring(gg.Screenshot.LastIndexOfAny(new char[] { '\\', '/' }) + 1);
+							string dst = "TileCache/" + gg.Screenshot.Replace("\\", "_").Replace("/", "_").Replace(":", "_");
 
 							dst = dst.Replace(".png", ".tile");
 
@@ -325,10 +333,23 @@ namespace GameDbManagerMega
 				string[] cues = Directory.GetFiles(d, "*.cue");
 				if (cues.Length == 1)
 				{
+					string []MDs = Directory.GetFiles(d, "*.md");
+
 					try
 					{
 						CueSheet cue = new CueSheet(cues[0]);
-						uint crc = ComputeCueCrc(cue);
+						uint crc = 0;
+
+						if (MDs.Length == 1) //It's an MD+ game
+						{
+							byte[] data = File.ReadAllBytes(MDs[0]);
+
+							crc = Crc32.Compute(data);
+						}
+						else
+						{
+							crc = ComputeCueCrc(cue);
+						}
 
 
 						GameDB.GameCkRow ck = db.GameCk.FirstOrDefault(w => w.Checksum == crc.ToString("X8"));
@@ -368,7 +389,8 @@ namespace GameDbManagerMega
 
 								if (gg != null && !gg.IsScreenshotNull())
 								{
-									string dst = "TileCache/" + gg.Screenshot.Substring(gg.Screenshot.LastIndexOfAny(new char[] { '\\', '/' }) + 1);
+									//string dst = "TileCache/" + gg.Screenshot.Substring(gg.Screenshot.LastIndexOfAny(new char[] { '\\', '/' }) + 1);
+									string dst = "TileCache/" + gg.Screenshot.Replace("\\","_").Replace("/","_").Replace(":","_");
 
 									dst = dst.Replace(".png", ".tile");
 
@@ -502,6 +524,10 @@ namespace GameDbManagerMega
 
 		public static uint ComputeCueCrc(CueSheet cue)
 		{
+			if (!cue.HasDataTrack())
+			{
+				throw new Exception("Audio only CDs are not supported for hashing");
+			}
 			CueSheet.Track track = cue.FindFirstDataTrack();
 			uint crcAccum = 0xFFFFFFFF;
 			using (FileStream fs = new FileStream(track.FileName, FileMode.Open, FileAccess.Read))
@@ -545,55 +571,6 @@ namespace GameDbManagerMega
 
 			return crcAccum;
 		}
-
-#if !RELEASE
-		void TestCueSheet()
-		{
-			CueSheet cue = new CueSheet(@"K:\mame\roms\Akumajou_Dracula_X_-_Chi_no_Rinne_(NTSC-J)_[KMCD3005]\Akumajou_Dracula_X_-_Chi_no_Rinne_(NTSC-J)_[KMCD3005].cue");
-
-			CueSheet.Track track = cue.FindFirstDataTrack();
-
-			using (FileStream fs = new FileStream(track.FileName, FileMode.Open, FileAccess.Read))
-			{
-				using (BinaryReader reader = new BinaryReader(fs))
-				{
-
-					fs.Seek(track.FileOffset, SeekOrigin.Begin);
-
-					int numsects = 10;
-					uint crcAccum = 0xFFFFFFFF;
-
-					for (int i = 0; i < numsects; ++i)
-					{
-						byte[] data;
-						if (track.SectorSize == CueSheet.SectorSize._2352)
-						{
-							reader.ReadBytes(16);
-							data = reader.ReadBytes(2048);
-							reader.ReadBytes(288);
-						}
-						else
-						{
-							data = reader.ReadBytes(2048);
-						}
-
-						if (i == 0)  //check signature
-						{
-							if (data[0] != 0x82 || data[1] != 0xB1 || data[2] != 0x82 || data[3] != 0xCC || data[4] != 0x83 || data[5] != 0x76 || data[6] != 0x83 || data[7] != 0x8D)
-							{
-								Debug.Assert(false);
-							}
-
-						}
-
-						crcAccum = Crc32.ComputeStep(crcAccum, data);
-					}
-
-					crcAccum = Crc32.Finalize(crcAccum);
-				}
-			}
-		}
-#endif
 
 		public static void DoScanWithoutUI(string dir)
 		{
@@ -858,6 +835,9 @@ namespace GameDbManagerMega
 			{
 				string[] tokens = line.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
+				if (tokens.Length < 1)
+					continue;
+
 				switch (tokens[0])
 				{
 					case "FILE":
@@ -1025,6 +1005,10 @@ namespace GameDbManagerMega
 
 		}
 
+		public bool HasDataTrack()
+		{
+			return Tracks.Count(x => x.Type == TrackType.DATA) != 0;
+		}
 		public Track FindFirstDataTrack()
 		{
 			return Tracks.FirstOrDefault(x => x.Type == TrackType.DATA);

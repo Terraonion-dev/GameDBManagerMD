@@ -210,10 +210,18 @@ namespace GameDbManagerMega
 					continue;
 				}
 
-				if (GetSize(f) > 16 * 1024 * 1024)
+				try
 				{
+					if (GetSize(f) > 16 * 1024 * 1024)
+					{
+						continue;
+					}
+				} catch (System.IO.PathTooLongException)
+				{
+					Console.WriteLine("Path too long: " + f + " . Skipped");
 					continue;
 				}
+
 
 				byte[] data = File.ReadAllBytes(f);
 

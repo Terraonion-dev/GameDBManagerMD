@@ -210,10 +210,18 @@ namespace GameDbManagerMega
 					continue;
 				}
 
-				if (GetSize(f) > 16 * 1024 * 1024)
+				try
 				{
+					if (GetSize(f) > 16 * 1024 * 1024)
+					{
+						continue;
+					}
+				} catch (System.IO.PathTooLongException)
+				{
+					Console.WriteLine("Path too long: " + f + " . Skipped");
 					continue;
 				}
+
 
 				byte[] data = File.ReadAllBytes(f);
 
@@ -330,14 +338,19 @@ namespace GameDbManagerMega
 			//scan dirs for cds
 			foreach (string d in Directory.GetDirectories(dir))
 			{
-				string[] cues = Directory.GetFiles(d, "*.cue");
-				if (cues.Length == 1)
+				// Sort files alphabetically and use the first one if multiple cues are in the directory
+				string[] cues = Directory.GetFiles(d, "*.cue").OrderBy(x => x).ToArray();
+
+				if (cues.Length > 0)
 				{
-					string []MDs = Directory.GetFiles(d, "*.md");
+					// Use first cue file
+					string firstCueFile = cues[0];
+
+					string[]MDs = Directory.GetFiles(d, "*.md");
 
 					try
 					{
-						CueSheet cue = new CueSheet(cues[0]);
+						CueSheet cue = new CueSheet(firstCueFile);
 						uint crc = 0;
 
 						if (MDs.Length == 1) //It's an MD+ game
@@ -436,7 +449,7 @@ namespace GameDbManagerMega
 					}
 					catch (Exception ex)
 					{
-						Console.WriteLine("Error processing " + cues[0] + " . Skipped");
+						Console.WriteLine("Error processing " + firstCueFile + " . Skipped");
 						Console.WriteLine(ex.Message);
 					}
 
